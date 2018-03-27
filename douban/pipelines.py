@@ -19,3 +19,14 @@ class HuanQiuChinaPipeline(object):
     # def process_item(self, item, spider):
     #     with open('test.txt', 'a') as f:
     #         f.write(item['title']+'\n')
+
+
+class DaoMuBiJiPipeline(object):
+    def __init__(self):
+        connection = pymongo.MongoClient()
+        self.db = connection.xiaoshuo
+        self.tb = self.db.daomubiji
+
+    def process_item(self, item, spider):
+        self.tb.insert(dict(item))
+        return item

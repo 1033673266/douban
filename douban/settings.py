@@ -21,7 +21,7 @@ MONGODB_DOCNAME = 'Book'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'douban (+http://www.yourdomain.com)'
+USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -71,6 +71,8 @@ ROBOTSTXT_OBEY = True
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    'douban.pipelines.HuanQiuChinaPipeline': 300,
+'douban.pipelines.DaoMuBiJiPipeline': 300,
+
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

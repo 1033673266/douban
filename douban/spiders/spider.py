@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import scrapy
-from ..items import HuanQiuChina
+from scrapy.selector import Selector
+from scrapy.http import Request
+from douban.items import HuanQiuChina, DaoMuBiJi
 
 
 class Douban(scrapy.Spider):
@@ -25,3 +27,30 @@ class Douban(scrapy.Spider):
                 continue
 
 
+class DaoMuBiJiSpider(scrapy.Spider):
+    name = 'daomubiji'
+    start_urls = ['http://www.daomubiji.com/dao-mu-bi-ji-%s' % num for num in range(1, 8)]
+
+    def parse(self, response):
+        selector = Selector(response)
+        book = selector.xpath('/html/body/div[1]/div/h1/text()').extract()[0]
+        chaptors = selector.xpath('/html/body/section/div[2]/div/article/a')
+        for chaptor in chaptors:
+            chaptor.xpath('./text()').extract()[0].split(' ')
+            bookTitle, chaptorNum, chaptorName = chaptor.xpath('./text()').extract()[0].split(' ')
+            url = chaptor.xpath('./@href').extract()[0]
+            item = DaoMuBiJi()
+            item['book'] = book
+            item['bookTitle'] = bookTitle
+            item['chaptorNum'] = chaptorNum
+            item['chaptorName'] = chaptorName
+            item['url'] = url
+            yield Request(url, callback=self.parseContent, meta={'item': item})
+
+    def parseContent(self, response):
+        selector = Selector(response)
+        item = response.meta['item']
+        html = selector.xpath('/html/body/section/div[1]/div/article').extract()[0]
+        item['content'] = html
+
+        yield item
